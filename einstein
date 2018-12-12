@@ -1,0 +1,47 @@
+#include<stdio.h>
+#include<string.h>
+#include<iostream>
+using namespace std;
+const int N=520000;
+char s[N],cpy[N<<1];
+int rad[N<<1];
+void manacher(char *s,int len,int rad[])
+{
+    for(int i=1,j=0,k;i<len;i+=k)
+    {
+        while(s[i-j-1]==s[i+j+1])    
+        j++;
+        rad[i]=j;
+        for(k=1;k<=rad[i]&&rad[i-k]!=rad[i]-k;k++)
+            rad[i+k]=min(rad[i]-k,rad[i-k]);
+        j=max(j-k,0);
+    }
+}
+
+void work(char *s,int rad[])
+{
+    int len=strlen(s);
+    int Len=len;
+    cpy[0]='(',cpy[1]='#';
+    for(int i=0,j=2;i<len;i++,j+=2)
+    {
+        cpy[j]=s[i];
+        cpy[j+1]='#';
+    }
+    cpy[(len=len*2+3)-1]=')';
+    manacher(cpy,len,rad);
+    int ans=0;
+    for(int i=0;i<len;i++)
+        ans+=rad[i]/2;
+        ans+=Len;
+    printf("%d\n",ans);
+}
+
+int main()
+{
+    while(scanf("%s",s)!=EOF)
+    {
+        work(s,rad);
+    } 
+    return 0;
+}
